@@ -1,0 +1,91 @@
+@media (max-width: 990px) {
+  
+  .list {
+    flex-direction: column;
+  }
+
+  .list__item.last-item {
+    width: 100%;
+    padding-top: 80%;
+   }
+
+   .list__item {
+    width: 50%;
+    padding-top: 25%;
+   } 
+}
+
+
+@media (max-width: 790px) {
+
+  input {
+    min-width: 150px;
+  }
+
+  .header__title {
+    font-size: 25px;
+  }
+
+  .list__item {
+    padding-top: 40%;
+  }
+
+  .list__item-title {
+    font-size: 25px;
+  }
+}
+
+@media (max-width: 550px) {
+
+  .header__input-wrap {
+    transition: transform .3s ease-in-out;
+    transform: scale(0);
+  }
+
+  .header__input {
+    display: none;
+  }
+
+  .header__svg-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .list__item-content-wrap {
+    gap: 2px;
+  }
+  
+  .list__item.last-item {
+    width: 85%;
+    padding-top: 100%;
+    background-size: 90% 40%;
+   }
+
+  .list__item {
+   width: 55%;
+   padding-top: 60%;
+   background-size: 55% 40%;
+  }
+   
+  .list__item-title {
+    font-size: 17px;
+  }
+
+  .list__item-txt {
+    font-size: 17px;
+  }
+
+  .list__item-paragraph {
+    font-size: 15px;
+  }
+
+  .list__item-edit-btn {
+    font-size: 15px;
+    padding: 5px;
+  }
+
+  .list__item-remove-btn {
+    font-size: 15px;
+    padding: 5px;
+  }
+}
