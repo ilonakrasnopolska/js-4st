@@ -1,0 +1,16 @@
+/* colors */
+:root {
+  --grey: #5d5d5d;
+  --grey-usual: #aeabab;
+  --grey-light: #eaeaea;
+  --white: #ffffff;
+  --black: #000000;
+  --red: #d10000;
+  --red-light: #ff7878;
+  --green: #008133;
+  --green-light: #47c767;
+}
+
+:root {
+  --mb: 10px;
+}
