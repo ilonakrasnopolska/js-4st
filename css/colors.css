@@ -9,6 +9,7 @@
   --red-light: #ff7878;
   --green: #008133;
   --green-light: #47c767;
+  --blue-light: rgb(227, 252, 230);
 }
 
 :root {

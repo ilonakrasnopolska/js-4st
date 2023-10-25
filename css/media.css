@@ -6,12 +6,10 @@
 
   .list__item.last-item {
     width: 100%;
-    padding-top: 80%;
    }
 
    .list__item {
     width: 50%;
-    padding-top: 25%;
    } 
 }
 
@@ -24,10 +22,6 @@
 
   .header__title {
     font-size: 25px;
-  }
-
-  .list__item {
-    padding-top: 40%;
   }
 
   .list__item-title {
@@ -57,14 +51,10 @@
   
   .list__item.last-item {
     width: 85%;
-    padding-top: 100%;
-    background-size: 90% 40%;
    }
 
   .list__item {
    width: 55%;
-   padding-top: 60%;
-   background-size: 55% 40%;
   }
    
   .list__item-title {

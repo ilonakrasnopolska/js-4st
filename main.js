@@ -6,8 +6,9 @@ let productAmountArr = ['2', '3', '1', '2'] //Массив для хранени
 let productPriceArr = ['30', '15', '3', '30'] //Массив для хранения стоимости продукта
 let productTotalPrice = [] //Массив для хранения общей стоимости каждого продукта взависимости от кол-во
 
-let index = 4 //Переменная, которая хранит index элемента
+let index = productOfNameArr.length //Переменная, которая хранит index элемента
 let basketProductAmount = '' //Переменная которая будет создавать элемент с index продуктов в корзине
+let counter = 100 //Переменная, для выбора кол-во продукта при покупке
 
 let finalProductsPrice = 0 //Переменная хранит итоговую стоимость продуктов 
 let productItem = '' //Переменная, которая будет принимать функцию для отрисовки li в функции render
@@ -78,11 +79,13 @@ function createListItem(classList) { //Функция создает li
 
 function createFinalPrice(finalCost) { //Функция создает блок итоговой цены
 
-  let finalPrice = createDiv('final-price') //Создаем div
-  let finalPriceTxt = createStrong('final-price__txt', `Total cost: ${finalCost}`) //Создаем strong cо стоимостью
+  let finalPriceFooter = createDiv('footer') //Создаем footer
+  let finalPriceContainer = createDiv('footer__container') //Создаем div container
+  let finalPriceTxt = createStrong('footer__final-price__txt', `Total cost: ${finalCost} $`) //Создаем strong cо стоимостью
 
-  finalPrice.append(finalPriceTxt)
-  container.append(finalPrice)
+  finalPriceContainer.append(finalPriceTxt) //Отправляем strong в div container
+  finalPriceFooter.append(finalPriceContainer) //Отравляем container в footer
+  document.body.append(finalPriceFooter)
 }
 
 function createHeader() { //Функция создает шапку страницы
@@ -132,44 +135,22 @@ function createTableProduct(picSrc, name, amount, price) { //Функция со
 
   let product = createComponentsForTable(`${name}`, `${amount}`, `${price}`) //переменная принимает функцию которая создает элементы внутри li
 
-  const buttonWrapper = createDiv('list__item-btn-wrapper')
-
-  const editBtn = createButton('list__item-edit-btn', 'Edit') //Создаем кнопку редактировать
-  editBtn.onclick = function () {
-    let productName = prompt('Enter product of name:') //Переменная принимает prompt
-
-    //Проверка был ли введен текст или нажата отмена 
-    if (productName !== null) {
-      let productAmount = prompt('Enter amount of product:') //Переменная принимает prompt
-      let productPrice = prompt('Enter product price:') //Переменная принимает prompt
-      //Проверка были ли введены числа
-      if (productAmount !== null && productPrice !== null && !isNaN(productAmount) && !isNaN(productPrice)) {
-        // Находим индекс текущей карточки продукта
-        const cardIndex = Array.from(table.children).indexOf(li)
-
-        // Обновляем значения в массивах
-        productOfNameArr[cardIndex] = productName
-        productAmountArr[cardIndex] = Number(productAmount)
-        productPriceArr[cardIndex] = Number(productPrice)
+  const buttonWrapper = createDiv('list__item-btn-wrapper') //Обертка для button
 
 
-        renderTable(imgArr, productOfNameArr, productAmountArr, productPriceArr) //Вызываем функцию отрисовки table
-      }
-      // Пользователь нажал "Отмена" или закрыл диалог prompt
-      else if (productAmount === null || productPrice === null) {
-        alert('Incorrect data!')
-      }
-    }
+  const amountBox = createDiv('list-item__amount-box') //Оберка для счетчика кол-во
+  const consButton = createButton('list__item-btn-cons', '-') //Создаем кнопку уменьшения кол-во
+  let numberOfProducts = createStrong('list-item__amount', `${counter}`) //Переменная принимает strong которая принимает кол-во продукта
+  const prosButton = createButton('list__item-btn-pros', '+') //Создаем кнопку увеличения кол-во
+  amountBox.append(consButton, numberOfProducts, prosButton) //Отправляем btn + и - в div 
 
-
-  }
 
   const removeBtn = createButton('list__item-remove-btn', 'Remove') //Создаем кнопку удалить
   removeBtn.onclick = function () {
 
     if (confirm('Are you sure that you want to remove the product?')) { //Условие при клике на кнопку удалить
       li.remove() //удаляем li
-      
+
       productPriceArr.splice(price, 1); //Удаляем из массива index
       productAmountArr.splice(price, 1); //Удаляем из массива index
       productOfNameArr.splice(price, 1); //Удаляем из массива index
@@ -177,8 +158,8 @@ function createTableProduct(picSrc, name, amount, price) { //Функция со
       finalProductsPrice -= price; //Отнимаем стоимость от итоговой цены
 
       //Условие проверки есть ли блок с итоговой ценой, если есть заменяем на новый
-      if (container.querySelector('.final-price')) { 
-        container.querySelector('.final-price').remove(); // Удалить предыдущий блок с итоговой ценой
+      if (document.querySelector('.footer')) {
+        document.querySelector('.footer').remove(); // Удалить предыдущий блок с итоговой ценой
       }
 
       createFinalPrice(finalProductsPrice) //Вызываем функцию которая создает блок итоговой стоимости
@@ -196,13 +177,13 @@ function createTableProduct(picSrc, name, amount, price) { //Функция со
         table.remove() //удаление ul
         let emptyList = createStrong('empty-list', 'Basket is empty') //Создаем strong с надписью пустая корзина
         container.append(emptyList)
-        container.querySelector('.final-price').remove(); // Удалить блок с итоговой ценой
+        document.querySelector('.footer').remove(); // Удалить блок с итоговой ценой
       }
     }
 
   }
 
-  buttonWrapper.append(editBtn, removeBtn) //append button edit и remove в div
+  buttonWrapper.append(amountBox, removeBtn) //append button edit и remove в div
   product.append(buttonWrapper) //append div с btn edit и remove в div с данными карточки
   li.append(product) //Добавляем div с контентом в li
   table.append(li) //Добавляем li в ul
@@ -222,9 +203,10 @@ function renderTable(picArr, productArr, amountArr, priceArr) { //Функция
     table.append(productItem) //Добавляем li в ul
   }
   //Условие проверки есть ли блок с итоговой ценой, если есть заменяем на новый
-  if (container.querySelector('.final-price')) { 
-    container.querySelector('.final-price').remove(); // Удалить предыдущий блок с итоговой ценой
+  if (document.querySelector('.footer')) {
+    document.querySelector('.footer').remove(); // Удалить предыдущий блок с итоговой ценой
   }
+
   createFinalPrice(finalProductsPrice) //Вызываем функцию которая создает блок итоговой стоимости
 }
 
@@ -235,6 +217,7 @@ createHeader()  //вызываем функцию которая создает 
 let table = createList('list') //переменая которая принимает функцию, которая создает ul
 container.append(table)
 
-renderTable(imgArr, productOfNameArr, productAmountArr, productPriceArr) //Вызываем функцию отрисовки table
 
 document.body.append(container)
+
+renderTable(imgArr, productOfNameArr, productAmountArr, productPriceArr) //Вызываем функцию отрисовки table

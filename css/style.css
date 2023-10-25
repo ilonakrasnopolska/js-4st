@@ -15,6 +15,7 @@ html {
 body {
   min-width: 320px;
   font-family: 'Times New Roman', Times, serif;
+  background-color: var(--blue-light);
 }
 
 a {
@@ -124,8 +125,8 @@ button {
   min-height: 100px;
   background-repeat: no-repeat;
   background-position: 50% 10%;
-  background-size: 80% 45%;
-  padding-top: 25%;
+  background-size: contain;
+  padding-top: 5%;
   background-color: var(--grey-light);
   transition: transform .3s ease-in-out;
 }
@@ -142,7 +143,7 @@ button {
   flex-shrink: 0;
   width: 100%;
   height: 100%;
-  padding: 10% 5% 5% 5%;
+  padding: 100% 5% 5% 5%;
 }
 
 .list__item-content-block {
@@ -174,19 +175,31 @@ button {
   gap: 10px;
 }
 
-.list__item-edit-btn {
-  width: 60%;
-  background-color: var(--green);
-  color: var(--white);
-  padding: 10px 30px;
-  border-radius: 8px;
-  font-size: 20px;
-  transition: background-color .3s ease-in-out, color .3s ease-in-out;
+.list-item__amount-box {
+  display: flex;
+  gap: 20px;
+  align-items: center;
 }
 
-.list__item-edit-btn:hover {
-  background-color: var(--green-light);
-  border: 1px solid var(--white);
+.list__item-btn-cons {
+  width: 35px;
+  height: 35px;
+  padding: 5px;
+  background-color: var(--white);
+  font-size: 20px;
+}
+
+.list__item-btn-pros {
+  width: 35px;
+  height: 35px;
+  padding: 5px;
+  background-color: var(--green);
+  color: var(--white);
+  font-size: 20px;
+}
+
+.list-item__amount {
+  font-size: 25px;
 }
 
 .list__item-remove-btn {
@@ -210,10 +223,25 @@ button {
 }
 
 .last-item {
-  padding-top: 50%;
+  padding-top: 5%;
 }
 
 .empty-list {
   color: var(--grey-usual);
   font-size: 50px;
+}
+
+.footer {
+  background-color: var(--grey);
+}
+
+.footer__container {
+  margin: 0 auto;
+  max-width: 1420px;
+  padding: 20px 20px;
+}
+
+.footer__final-price__txt {
+  font-size: 40px;
+  color: var(--white);
 }
