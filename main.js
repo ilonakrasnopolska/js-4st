@@ -4,12 +4,13 @@ let imgArr = ['./img/coffee.png', './img/cocacola.png', './img/bounty.png', './i
 let productOfNameArr = ['Coffee', 'Coca-Cola', 'Bounty', 'Ice-cream'] //Массив для хранения названий продуктов
 let productAmountArr = ['2', '3', '1', '2'] //Массив для хранения количества продукта
 let productPriceArr = ['30', '15', '3', '30'] //Массив для хранения стоимости продукта
+let counterArr = [1, 1, 1, 1] //Массив счетчиков для кол-во продуктов
 let productTotalPrice = [] //Массив для хранения общей стоимости каждого продукта взависимости от кол-во
 
 let index = productOfNameArr.length //Переменная, которая хранит index элемента
 let basketProductAmount = '' //Переменная которая будет создавать элемент с index продуктов в корзине
-let counter = 100 //Переменная, для выбора кол-во продукта при покупке
 
+let updateProductPrice = 0 //Переменная которая будет обновлять стоимость продукта при увеличении кол-во
 let finalProductsPrice = 0 //Переменная хранит итоговую стоимость продуктов 
 let productItem = '' //Переменная, которая будет принимать функцию для отрисовки li в функции render
 
@@ -107,7 +108,7 @@ function createHeader() { //Функция создает шапку стран�
   return document.body.append(header) //Добавляем header в container 
 }
 
-function createComponentsForTable(product, amount, price) { //Функция собирает элементы внутри li воедино
+function createComponentsForTable(product, price) { //Функция собирает элементы внутри li воедино
   let contentBox = createList('list__item-content-wrap') //List в котором находятся все элементы
 
   const nameBlock = createListItem('list__item-content-block') //ListItem для name
@@ -115,35 +116,64 @@ function createComponentsForTable(product, amount, price) { //Функция с�
   let title = createSubtitle('h3', 'list__item-title', product) //Создает subtitle с именем продукта
   nameBlock.append(nameTxt, title)
 
-  const amountBlock = createListItem('list__item-content-block') //ListItem для amount
-  let amountTxt = createParagraph('list__item-paragraph', 'Amount:')  //Создает p с надписью Amount
-  let amountNum = createStrong('list__item-txt', amount) //Создает strong с кол-во продукта
-  amountBlock.append(amountTxt, amountNum)
-
   const priceBlock = createListItem('list__item-content-block') //ListItem для price
   let priceTxt = createParagraph('list__item-paragraph', 'Price:') //Создает p с надписью Price
   let priceNum = createStrong('list__item-txt', price) //Создает strong со стоимостью продукта
   priceBlock.append(priceTxt, priceNum)
 
-  contentBox.append(nameBlock, amountBlock, priceBlock)
+  contentBox.append(nameBlock, priceBlock)
   return contentBox
 }
 
-function createTableProduct(picSrc, name, amount, price) { //Функция создает таблицу продуктов 
+function createTableProduct(picSrc, name, price, amount) { //Функция создает таблицу продуктов 
   let li = createListItem('list__item') //Создаем li 
   li.style.backgroundImage = `url(${picSrc})` //добавляем backg-img к li
 
-  let product = createComponentsForTable(`${name}`, `${amount}`, `${price}`) //переменная принимает функцию которая создает элементы внутри li
+  let product = createComponentsForTable(`${name}`, `${price}`) //переменная принимает функцию которая создает элементы внутри li
 
   const buttonWrapper = createDiv('list__item-btn-wrapper') //Обертка для button
 
-
   const amountBox = createDiv('list-item__amount-box') //Оберка для счетчика кол-во
-  const consButton = createButton('list__item-btn-cons', '-') //Создаем кнопку уменьшения кол-во
-  let numberOfProducts = createStrong('list-item__amount', `${counter}`) //Переменная принимает strong которая принимает кол-во продукта
-  const prosButton = createButton('list__item-btn-pros', '+') //Создаем кнопку увеличения кол-во
-  amountBox.append(consButton, numberOfProducts, prosButton) //Отправляем btn + и - в div 
 
+  const consButton = createButton('list__item-btn-cons', '-') //Создаем кнопку уменьшения кол-во
+  consButton.onclick = function () { //Кнопка уменьшает кол-во продукта
+    if (counterArr[amount] > 0) { //Если amount больше чем 0 
+      counterArr[amount]--;
+      updateProductPrice = price * counterArr[amount]; //Обновляем стоимость продукта  - цена * на кол-во
+      numberOfProducts.textContent = counterArr[amount]; // Обновляем текст numberOfProducts
+      let priceElement = li.querySelector('.list__item-txt'); // Находим элемент с ценой в текущем li
+      priceElement.textContent = updateProductPrice; // Обновляем сумму товара
+
+      //Условие проверки есть ли блок с итоговой ценой, если есть заменяем на новый
+      if (document.querySelector('.footer')) {
+        document.querySelector('.footer').remove(); // Удалить предыдущий блок с итоговой ценой
+      }
+      finalProductsPrice -= updateProductPrice // Увеличиваем общую стоимость на стоимость текущего продукта
+      createFinalPrice(updateProductPrice) //Вызываем функцию которая создает блок итоговой стоимости
+    }
+  }
+
+  let numberOfProducts = createStrong('list-item__amount', `${counterArr[amount]}`) //Переменная принимает strong которая принимает кол-во продукта
+
+  const prosButton = createButton('list__item-btn-pros', '+') //Создаем кнопку увеличения кол-во
+  prosButton.onclick = function () { //Кнопка увеличивает кол-во продукта
+    if (counterArr[amount] < 100) { //Если amount меньше чем 100
+      counterArr[amount]++;
+      updateProductPrice = price * counterArr[amount]; //Обновляем стоимость продукта  - цена * на кол-во
+      numberOfProducts.textContent = counterArr[amount]; // Обновляем текст numberOfProducts
+      let priceElement = li.querySelector('.list__item-txt'); // Находим элемент с ценой в текущем li
+      priceElement.textContent = updateProductPrice; // Обновляем сумму товара
+
+      //Условие проверки есть ли блок с итоговой ценой, если есть заменяем на новый
+      if (document.querySelector('.footer')) {
+        document.querySelector('.footer').remove(); // Удалить предыдущий блок с итоговой ценой
+      }
+      finalProductsPrice += updateProductPrice // Увеличиваем общую стоимость на стоимость текущего продукта
+      createFinalPrice(updateProductPrice) //Вызываем функцию которая создает блок итоговой стоимости
+    }
+  }
+
+  amountBox.append(consButton, numberOfProducts, prosButton) //Отправляем btn + и - в div 
 
   const removeBtn = createButton('list__item-remove-btn', 'Remove') //Создаем кнопку удалить
   removeBtn.onclick = function () {
@@ -190,15 +220,15 @@ function createTableProduct(picSrc, name, amount, price) { //Функция со
   return li
 }
 
-function renderTable(picArr, productArr, amountArr, priceArr) { //Функция отрисовки таблицы 
+function renderTable(picArr, productArr, priceArr, amountArr) { //Функция отрисовки таблицы 
   table.innerHTML = "" //Очищаем список перед отрисовкой
   index = 0 //Анулируем перед отрисовкой
   finalProductsPrice = 0; // Сбрасываем значение перед пересчетом итоговой стоимости
 
   for (i = 0; i < productOfNameArr.length; i++) { //Начинаем отрисовку используя массив и цикл 
-    const price = parseFloat(priceArr[i]); // Преобразование цены в число
-    productItem = createTableProduct(picArr[i], productArr[i], amountArr[i], priceArr[i])
-    index++ //Добавляем к index + 
+    const price = parseFloat(priceArr[i]); //Преобразование цены в число
+    productItem = createTableProduct(picArr[i], productArr[i], priceArr[i], i)
+    index++ //Добавляем к index +     
     finalProductsPrice += price // Увеличиваем общую стоимость на стоимость текущего продукта
     table.append(productItem) //Добавляем li в ul
   }
@@ -220,4 +250,4 @@ container.append(table)
 
 document.body.append(container)
 
-renderTable(imgArr, productOfNameArr, productAmountArr, productPriceArr) //Вызываем функцию отрисовки table
+renderTable(imgArr, productOfNameArr, productPriceArr, counterArr) //Вызываем функцию отрисовки table
