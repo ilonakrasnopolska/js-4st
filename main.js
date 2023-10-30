@@ -5,13 +5,13 @@ let productOfNameArr = ['Coffee', 'Coca-Cola', 'Bounty', 'Ice-cream'] //Масс
 let productAmountArr = ['2', '3', '1', '2'] //Массив для хранения количества продукта
 let productPriceArr = ['30', '15', '3', '30'] //Массив для хранения стоимости продукта
 let counterArr = [1, 1, 1, 1] //Массив счетчиков для кол-во продуктов
-let productTotalPrice = [] //Массив для хранения общей стоимости каждого продукта взависимости от кол-во
+let productTotalPriceArr = [] //Массив для хранения общей стоимости каждого продукта взависимости от кол-во
 
 let index = productOfNameArr.length //Переменная, которая хранит index элемента
-let basketProductAmount = '' //Переменная которая будет создавать элемент с index продуктов в корзине
+let basketProductAmount = '' //Переменная которая будет принимать div с цифрой index продуктов в корзине
 
-let updateProductPrice = 0 //Переменная которая будет обновлять стоимость продукта при увеличении кол-во
-let finalProductsPrice = 0 //Переменная хранит итоговую стоимость продуктов 
+let updateProductPrice = 0 //Переменная которая будет обновлять стоимость 1 продукта при увеличении его кол-во
+let finalProductsPrice = 0 //Переменная хранит итоговую стоимость всех продуктов 
 let productItem = '' //Переменная, которая будет принимать функцию для отрисовки li в функции render
 
 function createDiv(classList) { //Функция создает Div
@@ -87,6 +87,35 @@ function createFinalPrice(finalCost) { //Функция создает блок 
   finalPriceContainer.append(finalPriceTxt) //Отправляем strong в div container
   finalPriceFooter.append(finalPriceContainer) //Отравляем container в footer
   document.body.append(finalPriceFooter)
+
+}
+
+function removeProductAfterSearchResult(startIndex, count) { //Функция для удаления li-item при поиске элементов
+
+  // Удаляем count карточек начиная с startIndex
+  productOfNameArr.splice(startIndex, count);
+  productPriceArr.splice(startIndex, count);
+  productAmountArr.splice(startIndex, count);
+  counterArr.splice(startIndex, count);
+
+  index = productOfNameArr.length; // Обновляем значение index
+  updateTotalPrice() //вызываем функцию подсчета итоговой стоимости
+}
+
+function updateTotalPrice() { //Функция пересчета итоговой стоимости
+  finalProductsPrice = 0; //переменная для итоговой стоимости
+
+  for (let i = 0; i < productOfNameArr.length; i++) {
+    finalProductsPrice += counterArr[i] * productPriceArr[i]; //умножаем кол-во на стоимость
+    basketProductAmount.textContent = index;
+    finalProductsPrice.textContent = `Total cost: ${finalProductsPrice} $`
+  }
+
+  // Обновляем общую стоимость на странице
+  if (document.querySelector('.footer')) {
+    document.querySelector('.footer').remove();
+  }
+  return createFinalPrice(finalProductsPrice)
 }
 
 function createHeader() { //Функция создает шапку страницы
@@ -97,7 +126,70 @@ function createHeader() { //Функция создает шапку стран�
   let inputWrapper = createDiv('header__input-wrap') //переменная принимает функцию, которая создает div в котором лежит input и svg
   let input = createInput('header__input', 'text', 'Search') //Создаем input
   let svgSearch = createSvgButton('./img/search.svg') //Переменная принимает функцию которая создает svg
+
+  svgSearch.addEventListener('click', function () {
+    let removeBeforeCards = ''//переменная для удаления элементов из массива до выбранного
+    let removeAfterCards = '' //переменная для удаления элементов из массива после выбранного
+
+    if (input.value === 'Coffee' || input.value === 'coffee') {
+      let cards = document.querySelectorAll('.list__item'); // Находим все карточки
+      for (let index = 1; index < cards.length; index++) {
+        cards[index].remove(); // Удаляем все карточки, начиная со второй (индекс 1)
+      }
+      removeAfterCards = removeProductAfterSearchResult(Number(1), Number(3)) //вызываем функцию удаления продуктов из массива
+      input.value = '' //очищаем input
+    }
+
+    else if (input.value === 'Coca-cola' || input.value === 'coca-cola' || input.value === 'Coca-Cola') {
+      let cards = document.querySelectorAll('.list__item'); // Находим все карточки
+      for (let index = 0; index < cards.length; index++) {
+        if (index === 0 || index === 2 || index === 3) { //Если index li = 0 , 2 , 3
+          cards[index].remove(); // Удаляем li с index 0 , 2 , 3
+        }
+      }
+      removeBeforeCards = removeProductAfterSearchResult(Number(0), Number(1)) //вызываем функцию удаления продуктов из массива
+      removeAfterCards = removeProductAfterSearchResult(Number(1), Number(3)) //вызываем функцию удаления продуктов из массива
+      input.value = '' //очищаем input
+    }
+
+    else if (input.value === 'Bounty' || input.value === 'bounty') {
+      let cards = document.querySelectorAll('.list__item'); // Находим все карточки
+      for (let index = 0; index < cards.length; index++) {
+        if (index === 0 || index === 1 || index === 3) { //Если index li = 0 , 1 , 3
+          cards[index].remove(); // Удаляем li с index 0 , 1 , 3
+        }
+      }
+      removeBeforeCards = removeProductAfterSearchResult(Number(0), Number(2)) //вызываем функцию удаления продуктов из массива
+      productOfNameArr.pop() //удаляем последний обьект из массива
+      productPriceArr.pop() //удаляем последний обьект из массива
+      productAmountArr.pop() //удаляем последний обьект из массива
+      counterArr.pop() //удаляем последний обьект из массива
+      index--
+      updateTotalPrice() //Обновляем итоговую стоимость
+
+      input.value = '' //очищаем input
+    }
+
+    else if (input.value === 'Ice-cream' || input.value === 'ice-cream') {
+      let cards = document.querySelectorAll('.list__item'); // Находим все карточки
+      for (let index = 0; index < cards.length; index++) {
+        if (index === 0 || index === 1 || index === 2) { //Если index li = 0 , 1 , 2
+          cards[index].remove(); // Удаляем li с index 0 , 1 , 3
+        }
+      }
+      removeBeforeCards = removeProductAfterSearchResult(Number(0), Number(3)) //вызываем функцию удаления продуктов из массива
+      input.value = '' //очищаем input
+    }
+
+    else { //Проверка на введенные неверные символы в input 
+      alert('Invalid input. Please enter a valid search term.');
+      input.value = '' //очищаем input
+      return; // Выходим из функции, так как введенное значение недопустимо
+    }
+  })
+
   inputWrapper.append(input, svgSearch)
+
 
   let svgBasket = createSvgButton('./img/basket.svg') //Переменная принимает функцию которая создает svg
   basketProductAmount = createStrong('header__basket-number', `${index}`) //Создаем strong с index продуктов для корзины покупок
@@ -108,7 +200,7 @@ function createHeader() { //Функция создает шапку стран�
   return document.body.append(header) //Добавляем header в container 
 }
 
-function createComponentsForTable(product, price) { //Функция собирает элементы внутри li воедино
+function createComponentsForTable(product, price) { //Функция собирает содержимое li воедино
   let contentBox = createList('list__item-content-wrap') //List в котором находятся все элементы
 
   const nameBlock = createListItem('list__item-content-block') //ListItem для name
@@ -133,85 +225,84 @@ function createTableProduct(picSrc, name, price, amount) { //Функция со
 
   const buttonWrapper = createDiv('list__item-btn-wrapper') //Обертка для button
 
-  const amountBox = createDiv('list-item__amount-box') //Оберка для счетчика кол-во
+  const amountBox = createDiv('list-item__amount-box'); //Оберка для счетчика кол-во
 
-  const consButton = createButton('list__item-btn-cons', '-') //Создаем кнопку уменьшения кол-во
-  consButton.onclick = function () { //Кнопка уменьшает кол-во продукта
-    if (counterArr[amount] > 0) { //Если amount больше чем 0 
-      counterArr[amount]--;
-      updateProductPrice = price * counterArr[amount]; //Обновляем стоимость продукта  - цена * на кол-во
-      numberOfProducts.textContent = counterArr[amount]; // Обновляем текст numberOfProducts
-      let priceElement = li.querySelector('.list__item-txt'); // Находим элемент с ценой в текущем li
-      priceElement.textContent = updateProductPrice; // Обновляем сумму товара
-
-      //Условие проверки есть ли блок с итоговой ценой, если есть заменяем на новый
-      if (document.querySelector('.footer')) {
-        document.querySelector('.footer').remove(); // Удалить предыдущий блок с итоговой ценой
+  const consButton = createButton('list__item-btn-cons', '-'); //Создаем кнопку уменьшения кол-во
+  consButton.addEventListener('click', function (event) { //Кнопка уменьшает кол-во продукта
+    const target = event.target;
+  
+    // Проверяем, была ли нажата кнопка "-"
+    if (target.classList.contains('list__item-btn-cons')) {
+      const li = target.closest('.list__item'); // Находим родительскую карточку
+      const index = Array.from(table.querySelectorAll('.list__item')).indexOf(li);
+  
+      if (counterArr[index] > 0) { //Если index больше чем 0 
+        counterArr[index]--;
+  
+        const updateProductPrice = productPriceArr[index] * counterArr[index]; //Обновляем стоимость продукта  - цена * на кол-во
+        numberOfProducts.textContent = counterArr[index]; // Обновляем текст numberOfProducts
+        li.querySelector('.list-item__amount').textContent = counterArr[index];
+        li.querySelector('.list__item-txt').textContent = updateProductPrice;
+        
+        updateTotalPrice(); //вызываем функцию которая обновляет итоговую стоимость
       }
-      finalProductsPrice -= updateProductPrice // Увеличиваем общую стоимость на стоимость текущего продукта
-      createFinalPrice(updateProductPrice) //Вызываем функцию которая создает блок итоговой стоимости
     }
-  }
+  });
+  
+  let numberOfProducts = createStrong('list-item__amount', `${counterArr[amount]}`); //Переменная принимает strong которая принимает кол-во продукта
+  
+  const prosButton = createButton('list__item-btn-pros', '+'); //Создаем кнопку увеличения кол-во
+  prosButton.addEventListener('click', function (event) { //Кнопка увеличивает кол-во продукта
+    const target = event.target;
+    // Проверяем, была ли нажата кнопка "+"
+    if (target.classList.contains('list__item-btn-pros')) {
+      const li = target.closest('.list__item'); // Находим родительскую карточку
+      const index = Array.from(table.querySelectorAll('.list__item')).indexOf(li);
+      if (counterArr[index] < 100) { //Если index меньше чем 100
 
-  let numberOfProducts = createStrong('list-item__amount', `${counterArr[amount]}`) //Переменная принимает strong которая принимает кол-во продукта
-
-  const prosButton = createButton('list__item-btn-pros', '+') //Создаем кнопку увеличения кол-во
-  prosButton.onclick = function () { //Кнопка увеличивает кол-во продукта
-    if (counterArr[amount] < 100) { //Если amount меньше чем 100
-      counterArr[amount]++;
-      updateProductPrice = price * counterArr[amount]; //Обновляем стоимость продукта  - цена * на кол-во
-      numberOfProducts.textContent = counterArr[amount]; // Обновляем текст numberOfProducts
-      let priceElement = li.querySelector('.list__item-txt'); // Находим элемент с ценой в текущем li
-      priceElement.textContent = updateProductPrice; // Обновляем сумму товара
-
-      //Условие проверки есть ли блок с итоговой ценой, если есть заменяем на новый
-      if (document.querySelector('.footer')) {
-        document.querySelector('.footer').remove(); // Удалить предыдущий блок с итоговой ценой
+        counterArr[index]++;
+  
+        const updateProductPrice = productPriceArr[index] * counterArr[index]; //Обновляем стоимость продукта  - цена * на кол-во
+        numberOfProducts.textContent = counterArr[index]; // Обновляем текст numberOfProducts
+        li.querySelector('.list-item__amount').textContent = counterArr[index];
+        li.querySelector('.list__item-txt').textContent = updateProductPrice;
+        updateTotalPrice(); //вызываем функцию которая обновляет итоговую стоимость
       }
-      finalProductsPrice += updateProductPrice // Увеличиваем общую стоимость на стоимость текущего продукта
-      createFinalPrice(updateProductPrice) //Вызываем функцию которая создает блок итоговой стоимости
     }
-  }
-
-  amountBox.append(consButton, numberOfProducts, prosButton) //Отправляем btn + и - в div 
-
-  const removeBtn = createButton('list__item-remove-btn', 'Remove') //Создаем кнопку удалить
+  });
+  
+  amountBox.append(consButton, numberOfProducts, prosButton); //Отправляем btn + и - в div 
+  
+  const removeBtn = createButton('list__item-remove-btn', 'Remove'); //Создаем кнопку удалить
   removeBtn.onclick = function () {
-
+  
     if (confirm('Are you sure that you want to remove the product?')) { //Условие при клике на кнопку удалить
-      li.remove() //удаляем li
-
-      productPriceArr.splice(price, 1); //Удаляем из массива index
-      productAmountArr.splice(price, 1); //Удаляем из массива index
-      productOfNameArr.splice(price, 1); //Удаляем из массива index
-
-      finalProductsPrice -= price; //Отнимаем стоимость от итоговой цены
-
-      //Условие проверки есть ли блок с итоговой ценой, если есть заменяем на новый
-      if (document.querySelector('.footer')) {
-        document.querySelector('.footer').remove(); // Удалить предыдущий блок с итоговой ценой
+      li.remove(); //удаляем li
+  
+      finalProductsPrice -= price * counterArr[amount]; //Отнимаем от итоговой стоимости сумму стоимости продукта умноженной на кол-во
+      createFinalPrice(finalProductsPrice); //Обновляем блок итоговой цены
+  
+      if (document.querySelector('.footer')) { //Проверяем если блок итоговой цены уже есть, предыд удаляем и заменяем
+        document.querySelector('.footer').remove();
       }
-
-      createFinalPrice(finalProductsPrice) //Вызываем функцию которая создает блок итоговой стоимости
-
-      index-- //Уменьшаем значение index в корзине для покупок
+  
+      index--; //Уменьшаем значение index в корзине для покупок
       basketProductAmount.textContent = index; // Обновляем текст с количеством продуктов
-
+  
       const remainingItems = document.querySelectorAll('.list__item'); //Находим все элементы к классом list-item
       if (remainingItems.length === 1) { //Условие, если длина элементов равна 1
         remainingItems[0].classList.add('last-item'); // Если остался только один элемент, добавляем ему новый класс
-        table.classList.add('list-one-object') //Добавляем класс к ul
+        table.classList.add('list-one-object'); //Добавляем класс к ul
       }
-
+  
       if (table.querySelectorAll('li').length === 0) { //Проверка на отсутствие li в ul
-        table.remove() //удаление ul
-        let emptyList = createStrong('empty-list', 'Basket is empty') //Создаем strong с надписью пустая корзина
-        container.append(emptyList)
+        table.remove(); //удаление ul
+        let emptyList = createStrong('empty-list', 'Basket is empty'); //Создаем strong с надписью пустая корзина
+        container.append(emptyList);
         document.querySelector('.footer').remove(); // Удалить блок с итоговой ценой
       }
     }
-
-  }
+  };
 
   buttonWrapper.append(amountBox, removeBtn) //append button edit и remove в div
   product.append(buttonWrapper) //append div с btn edit и remove в div с данными карточки
@@ -220,24 +311,17 @@ function createTableProduct(picSrc, name, price, amount) { //Функция со
   return li
 }
 
-function renderTable(picArr, productArr, priceArr, amountArr) { //Функция отрисовки таблицы 
+function renderTable(picArr, productArr, priceArr, i) { //Функция отрисовки таблицы 
   table.innerHTML = "" //Очищаем список перед отрисовкой
   index = 0 //Анулируем перед отрисовкой
-  finalProductsPrice = 0; // Сбрасываем значение перед пересчетом итоговой стоимости
+  finalProductsPrice = 0 //Аннулируем перед отрисовкой
 
   for (i = 0; i < productOfNameArr.length; i++) { //Начинаем отрисовку используя массив и цикл 
-    const price = parseFloat(priceArr[i]); //Преобразование цены в число
+
     productItem = createTableProduct(picArr[i], productArr[i], priceArr[i], i)
-    index++ //Добавляем к index +     
-    finalProductsPrice += price // Увеличиваем общую стоимость на стоимость текущего продукта
+    index++ //Добавляем к index +   
     table.append(productItem) //Добавляем li в ul
   }
-  //Условие проверки есть ли блок с итоговой ценой, если есть заменяем на новый
-  if (document.querySelector('.footer')) {
-    document.querySelector('.footer').remove(); // Удалить предыдущий блок с итоговой ценой
-  }
-
-  createFinalPrice(finalProductsPrice) //Вызываем функцию которая создает блок итоговой стоимости
 }
 
 let container = createDiv('container') //создаем контейнер
@@ -247,7 +331,8 @@ createHeader()  //вызываем функцию которая создает 
 let table = createList('list') //переменая которая принимает функцию, которая создает ul
 container.append(table)
 
-
 document.body.append(container)
 
 renderTable(imgArr, productOfNameArr, productPriceArr, counterArr) //Вызываем функцию отрисовки table
+
+updateTotalPrice() //Вызываем функцию пересчета итоговой стоимости
