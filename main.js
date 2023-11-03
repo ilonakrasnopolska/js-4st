@@ -7,7 +7,7 @@ let productPriceArr = ['30', '15', '3', '30'] //Массив для хранен
 let counterArr = [1, 1, 1, 1] //Массив счетчиков для кол-во продуктов
 let productTotalPriceArr = [] //Массив для хранения общей стоимости каждого продукта взависимости от кол-во
 
-let index = productOfNameArr.length //Переменная, которая хранит index элемента
+let index = counterArr.length //Переменная, которая хранит index элемента
 let basketProductAmount = '' //Переменная которая будет принимать div с цифрой index продуктов в корзине
 
 let updateProductPrice = 0 //Переменная которая будет обновлять стоимость 1 продукта при увеличении его кол-во
@@ -98,7 +98,7 @@ function removeProductAfterSearchResult(startIndex, count) { //Функция д
   productAmountArr.splice(startIndex, count);
   counterArr.splice(startIndex, count);
 
-  index = productOfNameArr.length; // Обновляем значение index
+  index = counterArr.length; // Обновляем значение index
   updateTotalPrice() //вызываем функцию подсчета итоговой стоимости
 }
 
@@ -230,27 +230,32 @@ function createTableProduct(picSrc, name, price, amount) { //Функция со
   const consButton = createButton('list__item-btn-cons', '-'); //Создаем кнопку уменьшения кол-во
   consButton.addEventListener('click', function (event) { //Кнопка уменьшает кол-во продукта
     const target = event.target;
-  
+
     // Проверяем, была ли нажата кнопка "-"
     if (target.classList.contains('list__item-btn-cons')) {
       const li = target.closest('.list__item'); // Находим родительскую карточку
       const index = Array.from(table.querySelectorAll('.list__item')).indexOf(li);
-  
+
       if (counterArr[index] > 0) { //Если index больше чем 0 
         counterArr[index]--;
-  
+
         const updateProductPrice = productPriceArr[index] * counterArr[index]; //Обновляем стоимость продукта  - цена * на кол-во
         numberOfProducts.textContent = counterArr[index]; // Обновляем текст numberOfProducts
         li.querySelector('.list-item__amount').textContent = counterArr[index];
         li.querySelector('.list__item-txt').textContent = updateProductPrice;
-        
-        updateTotalPrice(); //вызываем функцию которая обновляет итоговую стоимость
+
+        createFinalPrice(updateProductPrice); //Обновляем блок итоговой цены
+
+
+        if (document.querySelector('.footer')) { //Проверяем если блок итоговой цены уже есть, предыд удаляем и заменяем
+          document.querySelector('.footer').remove();
+        }
       }
     }
   });
-  
+
   let numberOfProducts = createStrong('list-item__amount', `${counterArr[amount]}`); //Переменная принимает strong которая принимает кол-во продукта
-  
+
   const prosButton = createButton('list__item-btn-pros', '+'); //Создаем кнопку увеличения кол-во
   prosButton.addEventListener('click', function (event) { //Кнопка увеличивает кол-во продукта
     const target = event.target;
@@ -261,40 +266,45 @@ function createTableProduct(picSrc, name, price, amount) { //Функция со
       if (counterArr[index] < 100) { //Если index меньше чем 100
 
         counterArr[index]++;
-  
+
         const updateProductPrice = productPriceArr[index] * counterArr[index]; //Обновляем стоимость продукта  - цена * на кол-во
         numberOfProducts.textContent = counterArr[index]; // Обновляем текст numberOfProducts
         li.querySelector('.list-item__amount').textContent = counterArr[index];
         li.querySelector('.list__item-txt').textContent = updateProductPrice;
-        updateTotalPrice(); //вызываем функцию которая обновляет итоговую стоимость
+        createFinalPrice(updateProductPrice); //Обновляем блок итоговой цены
+
+
+        if (document.querySelector('.footer')) { //Проверяем если блок итоговой цены уже есть, предыд удаляем и заменяем
+          document.querySelector('.footer').remove();
+        }
       }
     }
   });
-  
+
   amountBox.append(consButton, numberOfProducts, prosButton); //Отправляем btn + и - в div 
-  
+
   const removeBtn = createButton('list__item-remove-btn', 'Remove'); //Создаем кнопку удалить
   removeBtn.onclick = function () {
-  
+
     if (confirm('Are you sure that you want to remove the product?')) { //Условие при клике на кнопку удалить
       li.remove(); //удаляем li
-  
+
       finalProductsPrice -= price * counterArr[amount]; //Отнимаем от итоговой стоимости сумму стоимости продукта умноженной на кол-во
       createFinalPrice(finalProductsPrice); //Обновляем блок итоговой цены
-  
+
       if (document.querySelector('.footer')) { //Проверяем если блок итоговой цены уже есть, предыд удаляем и заменяем
         document.querySelector('.footer').remove();
       }
-  
+
       index--; //Уменьшаем значение index в корзине для покупок
       basketProductAmount.textContent = index; // Обновляем текст с количеством продуктов
-  
+
       const remainingItems = document.querySelectorAll('.list__item'); //Находим все элементы к классом list-item
       if (remainingItems.length === 1) { //Условие, если длина элементов равна 1
         remainingItems[0].classList.add('last-item'); // Если остался только один элемент, добавляем ему новый класс
         table.classList.add('list-one-object'); //Добавляем класс к ul
       }
-  
+
       if (table.querySelectorAll('li').length === 0) { //Проверка на отсутствие li в ul
         table.remove(); //удаление ul
         let emptyList = createStrong('empty-list', 'Basket is empty'); //Создаем strong с надписью пустая корзина
