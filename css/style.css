@@ -175,13 +175,13 @@ button {
   gap: 10px;
 }
 
-.list-item__amount-box {
+.list-item__count-box {
   display: flex;
   gap: 20px;
   align-items: center;
 }
 
-.list__item-btn-cons {
+.list__item-btn-minus {
   width: 35px;
   height: 35px;
   padding: 5px;
@@ -190,11 +190,11 @@ button {
   transition: background-color .3s ease-in-out, color .3s ease-in-out;
 }
 
-.list__item-btn-cons:hover {
+.list__item-btn-minus:hover {
   background-color: var(--grey-light);
 }
 
-.list__item-btn-pros {
+.list__item-btn-plus {
   width: 35px;
   height: 35px;
   padding: 5px;
@@ -204,7 +204,7 @@ button {
   transition: background-color .3s ease-in-out, color .3s ease-in-out;
 }
 
-.list__item-btn-pros:hover {
+.list__item-btn-plus:hover {
   background-color: var(--green-light);
 }
 
